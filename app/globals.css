@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-gradient-to-r from-cyan-500 to-purple-500 text-white font-semibold py-3 px-6 rounded-xl hover:from-cyan-600 hover:to-purple-600 transition-all duration-300 transform hover:scale-105 shadow-lg;
+  }
+  
+  .btn-secondary {
+    @apply border-2 border-white border-opacity-20 text-white px-6 py-3 rounded-xl font-semibold hover:bg-white hover:bg-opacity-10 transition-all duration-300;
+  }
+  
+  .card {
+    @apply backdrop-blur-xl bg-white bg-opacity-10 rounded-3xl p-6 lg:p-8 border border-white border-opacity-20;
+  }
+  
+  .card-hover {
+    @apply hover:border-cyan-400 hover:border-opacity-30 transition-all duration-200;
+  }
+  
+  .text-gradient {
+    @apply bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent;
+  }
+  
+  .spinner {
+    @apply animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Custom animations */
+@keyframes pulse-soft {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Medical theme colors */
+:root {
+  --radmed-primary: #06B6D4;
+  --radmed-secondary: #8B5CF6;
+  --radmed-dark: #0F172A;
+  --radmed-darker: #020617;
+}
