@@ -33,6 +33,7 @@ export default function HomePage() {
   const [editingReport, setEditingReport] = useState<string | null>(null);
   const [editedContent, setEditedContent] = useState('');
   const [language, setLanguage] = useState<'en' | 'fr'>('en');
+  const [languageDropdownOpen, setLanguageDropdownOpen] = useState(false);
   
   // Translations
   const t = {
@@ -508,28 +509,44 @@ export default function HomePage() {
                   <span className="text-cyan-300 text-sm font-medium">{t[language].betaBadge}</span>
                 </div>
                 
-                {/* Language Selector */}
-                <div className="flex space-x-0.5 sm:space-x-2">
+                {/* Language Selector - Dropdown */}
+                <div className="relative">
                   <button
-                    onClick={() => setLanguage('en')}
-                    className={`px-1.5 sm:px-3 py-1 rounded-md sm:rounded-lg text-xs sm:text-sm transition-all duration-200 min-w-[32px] sm:min-w-[60px] ${
-                      language === 'en'
-                        ? 'bg-cyan-500 bg-opacity-30 text-cyan-300 border border-cyan-400'
-                        : 'bg-gray-500 bg-opacity-20 text-gray-300 hover:bg-opacity-30'
-                    }`}
+                    onClick={() => setLanguageDropdownOpen(!languageDropdownOpen)}
+                    className="flex items-center px-2 sm:px-3 py-1.5 rounded-md sm:rounded-lg text-xs sm:text-sm transition-all duration-200 bg-gray-500 bg-opacity-20 text-gray-300 hover:bg-opacity-30 border border-gray-600 min-w-[50px] sm:min-w-[60px]"
                   >
-                    EN
+                    <span>{language.toUpperCase()}</span>
+                    <svg className="w-3 h-3 ml-1 sm:ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
                   </button>
-                  <button
-                    onClick={() => setLanguage('fr')}
-                    className={`px-1.5 sm:px-3 py-1 rounded-md sm:rounded-lg text-xs sm:text-sm transition-all duration-200 min-w-[32px] sm:min-w-[60px] ${
-                      language === 'fr'
-                        ? 'bg-cyan-500 bg-opacity-30 text-cyan-300 border border-cyan-400'
-                        : 'bg-gray-500 bg-opacity-20 text-gray-300 hover:bg-opacity-30'
-                    }`}
-                  >
-                    FR
-                  </button>
+                  
+                  {languageDropdownOpen && (
+                    <div className="absolute top-full mt-1 right-0 bg-gray-800 bg-opacity-95 backdrop-blur-xl border border-gray-600 rounded-lg shadow-xl z-50 min-w-[80px]">
+                      <button
+                        onClick={() => {
+                          setLanguage('en');
+                          setLanguageDropdownOpen(false);
+                        }}
+                        className={`w-full px-3 py-2 text-left text-xs sm:text-sm hover:bg-gray-700 hover:bg-opacity-50 transition-colors ${
+                          language === 'en' ? 'text-cyan-300 bg-cyan-500 bg-opacity-20' : 'text-gray-300'
+                        } first:rounded-t-lg`}
+                      >
+                        🇺🇸 English
+                      </button>
+                      <button
+                        onClick={() => {
+                          setLanguage('fr');
+                          setLanguageDropdownOpen(false);
+                        }}
+                        className={`w-full px-3 py-2 text-left text-xs sm:text-sm hover:bg-gray-700 hover:bg-opacity-50 transition-colors ${
+                          language === 'fr' ? 'text-cyan-300 bg-cyan-500 bg-opacity-20' : 'text-gray-300'
+                        } last:rounded-b-lg`}
+                      >
+                        🇫🇷 Français
+                      </button>
+                    </div>
+                  )}
                 </div>
                 
                 <SignInButton mode="modal">
@@ -815,34 +832,55 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="flex items-center space-x-4">
-              {/* Language Selector */}
-              <div className="flex space-x-2">
+            <div className="flex items-center space-x-1 sm:space-x-4">
+              {/* Language Selector - Dropdown */}
+              <div className="relative">
                 <button
-                  onClick={() => setLanguage('en')}
-                  className={`px-3 py-1 rounded-lg text-sm transition-all duration-200 min-w-[60px] ${
-                    language === 'en'
-                      ? 'bg-cyan-500 bg-opacity-30 text-cyan-300 border border-cyan-400'
-                      : 'bg-gray-500 bg-opacity-20 text-gray-300 hover:bg-opacity-30'
-                  }`}
+                  onClick={() => setLanguageDropdownOpen(!languageDropdownOpen)}
+                  className="flex items-center px-2 sm:px-3 py-1.5 rounded-md sm:rounded-lg text-xs sm:text-sm transition-all duration-200 bg-gray-500 bg-opacity-20 text-gray-300 hover:bg-opacity-30 border border-gray-600 min-w-[50px] sm:min-w-[60px]"
                 >
-                  EN
+                  <span>{language.toUpperCase()}</span>
+                  <svg className="w-3 h-3 ml-1 sm:ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
                 </button>
-                <button
-                  onClick={() => setLanguage('fr')}
-                  className={`px-3 py-1 rounded-lg text-sm transition-all duration-200 min-w-[60px] ${
-                    language === 'fr'
-                      ? 'bg-cyan-500 bg-opacity-30 text-cyan-300 border border-cyan-400'
-                      : 'bg-gray-500 bg-opacity-20 text-gray-300 hover:bg-opacity-30'
-                  }`}
-                >
-                  FR
-                </button>
+                
+                {languageDropdownOpen && (
+                  <div className="absolute top-full mt-1 right-0 bg-gray-800 bg-opacity-95 backdrop-blur-xl border border-gray-600 rounded-lg shadow-xl z-50 min-w-[80px]">
+                    <button
+                      onClick={() => {
+                        setLanguage('en');
+                        setLanguageDropdownOpen(false);
+                      }}
+                      className={`w-full px-3 py-2 text-left text-xs sm:text-sm hover:bg-gray-700 hover:bg-opacity-50 transition-colors ${
+                        language === 'en' ? 'text-cyan-300 bg-cyan-500 bg-opacity-20' : 'text-gray-300'
+                      } first:rounded-t-lg`}
+                    >
+                      🇺🇸 English
+                    </button>
+                    <button
+                      onClick={() => {
+                        setLanguage('fr');
+                        setLanguageDropdownOpen(false);
+                      }}
+                      className={`w-full px-3 py-2 text-left text-xs sm:text-sm hover:bg-gray-700 hover:bg-opacity-50 transition-colors ${
+                        language === 'fr' ? 'text-cyan-300 bg-cyan-500 bg-opacity-20' : 'text-gray-300'
+                      } last:rounded-b-lg`}
+                    >
+                      🇫🇷 Français
+                    </button>
+                  </div>
+                )}
               </div>
               
-              <div className="text-right">
+              {/* User Info - Responsive */}
+              <div className="text-right hidden sm:block">
                 <p className="text-white font-medium">{user?.firstName} {user?.lastName}</p>
                 <p className="text-gray-400 text-sm">{user?.emailAddresses[0]?.emailAddress}</p>
+              </div>
+              {/* Mobile User Info - Just first name */}
+              <div className="text-right sm:hidden">
+                <p className="text-white font-medium text-xs truncate max-w-[80px]">{user?.firstName}</p>
               </div>
               <UserButton afterSignOutUrl="/" />
             </div>
