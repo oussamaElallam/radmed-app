@@ -34,6 +34,37 @@ export default function HomePage() {
   const [editedContent, setEditedContent] = useState('');
   const [language, setLanguage] = useState<'en' | 'fr'>('en');
   const [languageDropdownOpen, setLanguageDropdownOpen] = useState(false);
+
+  // Patch to prevent duplicate custom element definition errors from third-party libraries (e.g., Clerk/TinyMCE)
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'customElements' in window) {
+      const { define, get } = window.customElements as any;
+      // Only patch once
+      if (!(window as any).__patchedCustomElementsDefine) {
+        window.customElements.define = (name: string, clazz: any, options?: any) => {
+          // If element already defined, skip redefining to avoid "has already been defined" errors
+          if (get.call(window.customElements, name)) {
+            return;
+          }
+          return define.call(window.customElements, name, clazz, options);
+        };
+        (window as any).__patchedCustomElementsDefine = true;
+      }
+    }
+  }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (languageDropdownOpen && !target.closest('.language-dropdown')) {
+        setLanguageDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [languageDropdownOpen]);
   
   // Translations
   const t = {
@@ -493,7 +524,7 @@ export default function HomePage() {
         </div>
 
         {/* Navigation */}
-        <nav className="relative backdrop-blur-xl bg-white bg-opacity-10 border-b border-white border-opacity-20">
+        <nav className="relative z-50 backdrop-blur-xl bg-white bg-opacity-10 border-b border-white border-opacity-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
@@ -509,42 +540,46 @@ export default function HomePage() {
                   <span className="text-cyan-300 text-sm font-medium">{t[language].betaBadge}</span>
                 </div>
                 
-                {/* Language Selector - Dropdown */}
-                <div className="relative">
+                {/* Language Selector - Vertical Dropdown */}
+                <div className="relative language-dropdown">
                   <button
                     onClick={() => setLanguageDropdownOpen(!languageDropdownOpen)}
-                    className="flex items-center px-2 sm:px-3 py-1.5 rounded-md sm:rounded-lg text-xs sm:text-sm transition-all duration-200 bg-gray-500 bg-opacity-20 text-gray-300 hover:bg-opacity-30 border border-gray-600 min-w-[50px] sm:min-w-[60px]"
+                    className="flex items-center px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm transition-all duration-200 bg-gray-500 bg-opacity-20 text-gray-300 hover:bg-opacity-30 border border-gray-600 min-w-[60px]"
+                    style={{ position: 'relative', zIndex: 100001 }}
                   >
-                    <span>{language.toUpperCase()}</span>
-                    <svg className="w-3 h-3 ml-1 sm:ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <span>{language === 'en' ? '🇺🇸' : '🇫🇷'} {language.toUpperCase()}</span>
+                    <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </button>
                   
                   {languageDropdownOpen && (
-                    <div className="absolute top-full mt-1 right-0 bg-gray-800 bg-opacity-95 backdrop-blur-xl border border-gray-600 rounded-lg shadow-xl z-50 min-w-[80px]">
-                      <button
-                        onClick={() => {
-                          setLanguage('en');
-                          setLanguageDropdownOpen(false);
-                        }}
-                        className={`w-full px-3 py-2 text-left text-xs sm:text-sm hover:bg-gray-700 hover:bg-opacity-50 transition-colors ${
-                          language === 'en' ? 'text-cyan-300 bg-cyan-500 bg-opacity-20' : 'text-gray-300'
-                        } first:rounded-t-lg`}
-                      >
-                        🇺🇸 English
-                      </button>
-                      <button
-                        onClick={() => {
-                          setLanguage('fr');
-                          setLanguageDropdownOpen(false);
-                        }}
-                        className={`w-full px-3 py-2 text-left text-xs sm:text-sm hover:bg-gray-700 hover:bg-opacity-50 transition-colors ${
-                          language === 'fr' ? 'text-cyan-300 bg-cyan-500 bg-opacity-20' : 'text-gray-300'
-                        } last:rounded-b-lg`}
-                      >
-                        🇫🇷 Français
-                      </button>
+                    <div 
+                      className="absolute top-full mt-1 right-0 bg-gray-900 bg-opacity-98 backdrop-blur-xl border border-gray-600 rounded-lg shadow-2xl overflow-hidden z-30"
+                      style={{ zIndex: 100002, position: 'absolute', pointerEvents: 'auto' }}
+                    >
+                      <div className="max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
+                        <button
+                          onClick={() => { setLanguage('en'); setLanguageDropdownOpen(false); }}
+                          className={`w-full px-4 py-3 text-left text-sm hover:bg-gray-700 hover:bg-opacity-50 transition-colors flex items-center space-x-2 min-w-[120px] ${
+                            language === 'en' ? 'text-cyan-300 bg-cyan-500 bg-opacity-20' : 'text-gray-300'
+                          }`}
+                          style={{ pointerEvents: 'auto' }}
+                        >
+                          <span>🇺🇸</span>
+                          <span>English</span>
+                        </button>
+                        <button
+                          onClick={() => { setLanguage('fr'); setLanguageDropdownOpen(false); }}
+                          className={`w-full px-4 py-3 text-left text-sm hover:bg-gray-700 hover:bg-opacity-50 transition-colors flex items-center space-x-2 min-w-[120px] ${
+                            language === 'fr' ? 'text-cyan-300 bg-cyan-500 bg-opacity-20' : 'text-gray-300'
+                          }`}
+                          style={{ pointerEvents: 'auto' }}
+                        >
+                          <span>🇫🇷</span>
+                          <span>Français</span>
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -833,42 +868,46 @@ export default function HomePage() {
             </div>
 
             <div className="flex items-center space-x-1 sm:space-x-4">
-              {/* Language Selector - Dropdown */}
-              <div className="relative">
+              {/* Language Selector - Vertical Dropdown */}
+              <div className="relative language-dropdown">
                 <button
                   onClick={() => setLanguageDropdownOpen(!languageDropdownOpen)}
-                  className="flex items-center px-2 sm:px-3 py-1.5 rounded-md sm:rounded-lg text-xs sm:text-sm transition-all duration-200 bg-gray-500 bg-opacity-20 text-gray-300 hover:bg-opacity-30 border border-gray-600 min-w-[50px] sm:min-w-[60px]"
+                  className="flex items-center px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm transition-all duration-200 bg-gray-500 bg-opacity-20 text-gray-300 hover:bg-opacity-30 border border-gray-600 min-w-[60px]"
                 >
-                  <span>{language.toUpperCase()}</span>
-                  <svg className="w-3 h-3 ml-1 sm:ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <span>{language === 'en' ? '🇺🇸' : '🇫🇷'} {language.toUpperCase()}</span>
+                  <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
                 
                 {languageDropdownOpen && (
-                  <div className="absolute top-full mt-1 right-0 bg-gray-800 bg-opacity-95 backdrop-blur-xl border border-gray-600 rounded-lg shadow-xl z-50 min-w-[80px]">
-                    <button
-                      onClick={() => {
-                        setLanguage('en');
-                        setLanguageDropdownOpen(false);
-                      }}
-                      className={`w-full px-3 py-2 text-left text-xs sm:text-sm hover:bg-gray-700 hover:bg-opacity-50 transition-colors ${
-                        language === 'en' ? 'text-cyan-300 bg-cyan-500 bg-opacity-20' : 'text-gray-300'
-                      } first:rounded-t-lg`}
-                    >
-                      🇺🇸 English
-                    </button>
-                    <button
-                      onClick={() => {
-                        setLanguage('fr');
-                        setLanguageDropdownOpen(false);
-                      }}
-                      className={`w-full px-3 py-2 text-left text-xs sm:text-sm hover:bg-gray-700 hover:bg-opacity-50 transition-colors ${
-                        language === 'fr' ? 'text-cyan-300 bg-cyan-500 bg-opacity-20' : 'text-gray-300'
-                      } last:rounded-b-lg`}
-                    >
-                      🇫🇷 Français
-                    </button>
+                  <div className="absolute top-full mt-1 right-0 bg-gray-900 bg-opacity-98 backdrop-blur-xl border border-gray-600 rounded-lg shadow-2xl overflow-hidden" style={{ zIndex: 99999 }}>
+                    <div className="max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
+                      <button
+                        onClick={() => {
+                          setLanguage('en');
+                          setLanguageDropdownOpen(false);
+                        }}
+                        className={`w-full px-4 py-3 text-left text-sm hover:bg-gray-700 hover:bg-opacity-50 transition-colors flex items-center space-x-2 min-w-[120px] ${
+                          language === 'en' ? 'text-cyan-300 bg-cyan-500 bg-opacity-20' : 'text-gray-300'
+                        }`}
+                      >
+                        <span>🇺🇸</span>
+                        <span>English</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          setLanguage('fr');
+                          setLanguageDropdownOpen(false);
+                        }}
+                        className={`w-full px-4 py-3 text-left text-sm hover:bg-gray-700 hover:bg-opacity-50 transition-colors flex items-center space-x-2 min-w-[120px] ${
+                          language === 'fr' ? 'text-cyan-300 bg-cyan-500 bg-opacity-20' : 'text-gray-300'
+                        }`}
+                      >
+                        <span>🇫🇷</span>
+                        <span>Français</span>
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
