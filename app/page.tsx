@@ -493,26 +493,26 @@ export default function HomePage() {
 
         {/* Navigation */}
         <nav className="relative backdrop-blur-xl bg-white bg-opacity-10 border-b border-white border-opacity-20">
-          <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <NextImage src="/pnglogo.png" alt="RadMed Logo" width={40} height={40} className="mr-3 object-contain" />
                 <div>
-                  <h1 className="text-2xl font-bold text-white">RadMed</h1>
+                  <h1 className="text-xl sm:text-2xl font-bold text-white">RadMed</h1>
                   <p className="text-xs text-gray-400">by MAJD AI</p>
                 </div>
               </div>
-                            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2 sm:space-x-4">
                 {/* Beta Badge */}
-                <div className="hidden md:flex items-center px-3 py-1 bg-gradient-to-r from-cyan-500 to-purple-500 bg-opacity-20 border border-cyan-400 border-opacity-30 rounded-full">
+                <div className="hidden sm:flex items-center px-3 py-1 bg-gradient-to-r from-cyan-500 to-purple-500 bg-opacity-20 border border-cyan-400 border-opacity-30 rounded-full">
                   <span className="text-cyan-300 text-sm font-medium">{t[language].betaBadge}</span>
                 </div>
                 
                 {/* Language Selector */}
-                <div className="flex space-x-2">
+                <div className="flex space-x-1 sm:space-x-2">
                   <button
                     onClick={() => setLanguage('en')}
-                    className={`px-3 py-1 rounded-lg text-sm transition-all duration-200 min-w-[60px] ${
+                    className={`px-2 sm:px-3 py-1 rounded-lg text-xs sm:text-sm transition-all duration-200 min-w-[45px] sm:min-w-[60px] ${
                       language === 'en'
                         ? 'bg-cyan-500 bg-opacity-30 text-cyan-300 border border-cyan-400'
                         : 'bg-gray-500 bg-opacity-20 text-gray-300 hover:bg-opacity-30'
@@ -548,23 +548,23 @@ export default function HomePage() {
         </nav>
 
         {/* Hero Section */}
-        <section className="relative py-20 px-6">
+        <section className="relative py-12 sm:py-20 px-4 sm:px-6">
           <div className="max-w-7xl mx-auto text-center">
-            <h1 className="text-6xl font-bold text-white mb-6 leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white mb-4 sm:mb-6 leading-tight">
               {t[language].heroMain}
-              <span className="text-gradient block mt-2">{t[language].heroGradient}</span>
+              <span className="text-gradient block mt-1 sm:mt-2">{t[language].heroGradient}</span>
             </h1>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-12 leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-gray-300 max-w-3xl mx-auto mb-8 sm:mb-12 leading-relaxed px-4">
               {t[language].heroDesc}
             </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-12 sm:mb-16 px-4">
               <SignUpButton mode="modal">
-                <button className="btn-primary text-base px-6 py-3 min-w-[160px]">
+                <button className="btn-primary text-sm sm:text-base px-4 sm:px-6 py-2 sm:py-3 min-w-[140px] sm:min-w-[160px] w-full sm:w-auto">
                   {t[language].heroStartTrial}
                 </button>
               </SignUpButton>
               <button 
-                className="btn-secondary text-base px-6 py-3 min-w-[140px]"
+                className="btn-secondary text-sm sm:text-base px-4 sm:px-6 py-2 sm:py-3 min-w-[120px] sm:min-w-[140px] w-full sm:w-auto"
                 onClick={() => {
                   const featuresSection = document.getElementById('features');
                   featuresSection?.scrollIntoView({ behavior: 'smooth' });
@@ -577,15 +577,15 @@ export default function HomePage() {
         </section>
 
         {/* Features Section */}
-        <section id="features" className="py-20 px-6">
+        <section id="features" className="py-12 sm:py-20 px-4 sm:px-6">
           <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-white mb-4">{t[language].featuresTitle}</h2>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+            <div className="text-center mb-12 sm:mb-16">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4">{t[language].featuresTitle}</h2>
+              <p className="text-base sm:text-lg md:text-xl text-gray-300 max-w-3xl mx-auto px-4">
                 {t[language].featuresDesc}
               </p>
             </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
               <div className="bg-white bg-opacity-5 backdrop-blur-xl border border-white border-opacity-10 rounded-2xl p-8 hover:bg-opacity-10 transition-all duration-300">
                 <div className="w-12 h-12 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-xl flex items-center justify-center mb-6">
                   <Brain className="w-6 h-6 text-white" />
@@ -785,7 +785,14 @@ export default function HomePage() {
         <footer className="w-full border-t border-white border-opacity-10 bg-black bg-opacity-30 py-6 mt-8">
           <div className="max-w-7xl mx-auto px-6 flex flex-col items-center justify-center text-gray-400 text-sm text-center">
             <span>
-              MAJD AI. {t[language].footerRights}
+              <a 
+                href="https://majdai.ai" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-cyan-400 hover:text-cyan-300 transition-colors duration-200 font-medium"
+              >
+                MAJD AI
+              </a>. {t[language].footerRights}
             </span>
           </div>
         </footer>
@@ -798,7 +805,7 @@ export default function HomePage() {
     <div className="min-h-screen">
       {/* Header */}
       <header className="relative backdrop-blur-xl bg-white bg-opacity-10 border-b border-white border-opacity-20">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <NextImage src="/pnglogo.png" alt="RadMed Logo" width={40} height={40} className="mr-3 object-contain" />
@@ -844,48 +851,49 @@ export default function HomePage() {
       </header>
 
       {/* Navigation Tabs */}
-      <div className="max-w-7xl mx-auto px-6 py-6">
-        <div className="flex space-x-1 bg-black bg-opacity-20 rounded-2xl p-1 w-fit mx-auto">
+      <main className="flex-1 p-4 sm:p-6">
+        <div className="flex space-x-1 sm:space-x-2 mb-6 sm:mb-8 bg-white bg-opacity-5 rounded-xl p-1">
           <button
             onClick={() => setActiveTab('generate')}
-            className={`flex items-center px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
+            className={`flex-1 px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-all duration-200 ${
               activeTab === 'generate'
-                ? 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white shadow-lg'
+                ? 'bg-cyan-500 bg-opacity-30 text-cyan-300 border border-cyan-400'
                 : 'text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-10'
             }`}
           >
-            <Upload className="w-5 h-5 mr-2" />
-            {t[language].generate}
+            <FileText className="w-4 h-4 sm:w-5 sm:h-5 inline mr-1 sm:mr-2" />
+            <span className="hidden sm:inline">{t[language].generate}</span>
+            <span className="sm:hidden">Gen</span>
           </button>
           <button
             onClick={() => setActiveTab('history')}
-            className={`flex items-center px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
+            className={`flex-1 px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-all duration-200 ${
               activeTab === 'history'
-                ? 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white shadow-lg'
+                ? 'bg-cyan-500 bg-opacity-30 text-cyan-300 border border-cyan-400'
                 : 'text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-10'
             }`}
           >
-            <History className="w-5 h-5 mr-2" />
-            {t[language].history}
+            <History className="w-4 h-4 sm:w-5 sm:h-5 inline mr-1 sm:mr-2" />
+            <span className="hidden sm:inline">{t[language].history}</span>
+            <span className="sm:hidden">Hist</span>
           </button>
         </div>
-      </div>
 
-      {/* Error Display */}
-      {error && (
-        <div className="max-w-7xl mx-auto px-6 mb-6">
-          <div className="bg-red-500 bg-opacity-20 border border-red-500 border-opacity-50 rounded-xl p-4 flex items-center">
-            <AlertCircle className="w-5 h-5 text-red-400 mr-3" />
-            <p className="text-red-300">{error}</p>
-            <button onClick={clearError} className="ml-auto text-red-400 hover:text-red-300">
-              ×
-            </button>
+        {/* Error Display */}
+        {error && (
+          <div className="max-w-7xl mx-auto px-6 mb-6">
+            <div className="bg-red-500 bg-opacity-20 border border-red-500 border-opacity-50 rounded-xl p-4 flex items-center">
+              <AlertCircle className="w-5 h-5 text-red-400 mr-3" />
+              <p className="text-red-300">{error}</p>
+              <button onClick={clearError} className="ml-auto text-red-400 hover:text-red-300">
+                ×
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 pb-12">
+        {/* Main Content */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-12">
         {activeTab === 'generate' && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Upload Section */}
@@ -1231,7 +1239,8 @@ export default function HomePage() {
             )}
           </div>
         )}
-      </div>
+        </div>
+      </main>
 
       {/* Disclaimer */}
       <div className="relative backdrop-blur-xl bg-orange-500 bg-opacity-10 border-t border-orange-500 border-opacity-20">
