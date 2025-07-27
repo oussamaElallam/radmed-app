@@ -502,17 +502,17 @@ export default function HomePage() {
                   <p className="text-xs text-gray-400">by MAJD AI</p>
                 </div>
               </div>
-              <div className="flex items-center space-x-2 sm:space-x-4">
+              <div className="flex items-center space-x-1 sm:space-x-4">
                 {/* Beta Badge */}
                 <div className="hidden sm:flex items-center px-3 py-1 bg-gradient-to-r from-cyan-500 to-purple-500 bg-opacity-20 border border-cyan-400 border-opacity-30 rounded-full">
                   <span className="text-cyan-300 text-sm font-medium">{t[language].betaBadge}</span>
                 </div>
                 
                 {/* Language Selector */}
-                <div className="flex space-x-1 sm:space-x-2">
+                <div className="flex space-x-0.5 sm:space-x-2">
                   <button
                     onClick={() => setLanguage('en')}
-                    className={`px-2 sm:px-3 py-1 rounded-lg text-xs sm:text-sm transition-all duration-200 min-w-[45px] sm:min-w-[60px] ${
+                    className={`px-1.5 sm:px-3 py-1 rounded-md sm:rounded-lg text-xs sm:text-sm transition-all duration-200 min-w-[32px] sm:min-w-[60px] ${
                       language === 'en'
                         ? 'bg-cyan-500 bg-opacity-30 text-cyan-300 border border-cyan-400'
                         : 'bg-gray-500 bg-opacity-20 text-gray-300 hover:bg-opacity-30'
@@ -522,7 +522,7 @@ export default function HomePage() {
                   </button>
                   <button
                     onClick={() => setLanguage('fr')}
-                    className={`px-3 py-1 rounded-lg text-sm transition-all duration-200 min-w-[60px] ${
+                    className={`px-1.5 sm:px-3 py-1 rounded-md sm:rounded-lg text-xs sm:text-sm transition-all duration-200 min-w-[32px] sm:min-w-[60px] ${
                       language === 'fr'
                         ? 'bg-cyan-500 bg-opacity-30 text-cyan-300 border border-cyan-400'
                         : 'bg-gray-500 bg-opacity-20 text-gray-300 hover:bg-opacity-30'
@@ -533,12 +533,12 @@ export default function HomePage() {
                 </div>
                 
                 <SignInButton mode="modal">
-                  <button className="text-gray-300 hover:text-white transition-colors duration-200">
+                  <button className="text-gray-300 hover:text-white transition-colors duration-200 text-xs sm:text-sm">
                     {t[language].login}
                   </button>
                 </SignInButton>
                 <SignUpButton mode="modal">
-                  <button className="btn-primary text-sm px-4 py-2 min-w-[120px]">
+                  <button className="btn-primary text-xs sm:text-sm px-2 sm:px-4 py-1.5 sm:py-2 min-w-[80px] sm:min-w-[120px]">
                     {t[language].getStarted}
                   </button>
                 </SignUpButton>
