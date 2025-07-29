@@ -8,8 +8,18 @@ import {
   ArrowRight, CheckCircle, Star, Users, Award, Activity, AlertCircle, Loader2, Brain 
 } from 'lucide-react';
 import { useReports } from '@/hooks/useReports';
+import TermsGate from '@/components/TermsGate';
+import { useTermsModal } from '@/hooks/useTermsModal';
+import TermsOfServiceModal from '@/components/TermsOfServiceModal';
+import Link from 'next/link';
 
-export default function HomePage() {
+interface HomePageProps {
+  language: 'en' | 'fr';
+  setLanguage: (lang: 'en' | 'fr') => void;
+  openTermsModal: () => void;
+}
+
+function HomePage({ language, setLanguage, openTermsModal }: HomePageProps) {
   const { isSignedIn, user, isLoaded } = useUser();
   const [currentView, setCurrentView] = useState('landing');
   const [selectedImages, setSelectedImages] = useState<{file: File, preview: string, name: string}[]>([]);
@@ -32,7 +42,38 @@ export default function HomePage() {
   const [activeTab, setActiveTab] = useState('generate');
   const [editingReport, setEditingReport] = useState<string | null>(null);
   const [editedContent, setEditedContent] = useState('');
-  const [language, setLanguage] = useState<'en' | 'fr'>('en');
+  const [languageDropdownOpen, setLanguageDropdownOpen] = useState(false);
+
+  // Patch to prevent duplicate custom element definition errors from third-party libraries (e.g., Clerk/TinyMCE)
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'customElements' in window) {
+      const { define, get } = window.customElements as any;
+      // Only patch once
+      if (!(window as any).__patchedCustomElementsDefine) {
+        window.customElements.define = (name: string, clazz: any, options?: any) => {
+          // If element already defined, skip redefining to avoid "has already been defined" errors
+          if (get.call(window.customElements, name)) {
+            return;
+          }
+          return define.call(window.customElements, name, clazz, options);
+        };
+        (window as any).__patchedCustomElementsDefine = true;
+      }
+    }
+  }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (languageDropdownOpen && !target.closest('.language-dropdown')) {
+        setLanguageDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [languageDropdownOpen]);
   
   // Translations
   const t = {
@@ -492,7 +533,7 @@ export default function HomePage() {
         </div>
 
         {/* Navigation */}
-        <nav className="relative backdrop-blur-xl bg-white bg-opacity-10 border-b border-white border-opacity-20">
+        <nav className="relative z-50 backdrop-blur-xl bg-white bg-opacity-10 border-b border-white border-opacity-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
@@ -502,43 +543,63 @@ export default function HomePage() {
                   <p className="text-xs text-gray-400">by MAJD AI</p>
                 </div>
               </div>
-              <div className="flex items-center space-x-2 sm:space-x-4">
+              <div className="flex items-center space-x-1 sm:space-x-4">
                 {/* Beta Badge */}
                 <div className="hidden sm:flex items-center px-3 py-1 bg-gradient-to-r from-cyan-500 to-purple-500 bg-opacity-20 border border-cyan-400 border-opacity-30 rounded-full">
                   <span className="text-cyan-300 text-sm font-medium">{t[language].betaBadge}</span>
                 </div>
                 
-                {/* Language Selector */}
-                <div className="flex space-x-1 sm:space-x-2">
+                {/* Language Selector - Vertical Dropdown */}
+                <div className="relative language-dropdown">
                   <button
-                    onClick={() => setLanguage('en')}
-                    className={`px-2 sm:px-3 py-1 rounded-lg text-xs sm:text-sm transition-all duration-200 min-w-[45px] sm:min-w-[60px] ${
-                      language === 'en'
-                        ? 'bg-cyan-500 bg-opacity-30 text-cyan-300 border border-cyan-400'
-                        : 'bg-gray-500 bg-opacity-20 text-gray-300 hover:bg-opacity-30'
-                    }`}
+                    onClick={() => setLanguageDropdownOpen(!languageDropdownOpen)}
+                    className="flex items-center px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm transition-all duration-200 bg-gray-500 bg-opacity-20 text-gray-300 hover:bg-opacity-30 border border-gray-600 min-w-[60px]"
+                    style={{ position: 'relative', zIndex: 100001 }}
                   >
-                    EN
+                    <span>{language === 'en' ? '🇺🇸' : '🇫🇷'} {language.toUpperCase()}</span>
+                    <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
                   </button>
-                  <button
-                    onClick={() => setLanguage('fr')}
-                    className={`px-3 py-1 rounded-lg text-sm transition-all duration-200 min-w-[60px] ${
-                      language === 'fr'
-                        ? 'bg-cyan-500 bg-opacity-30 text-cyan-300 border border-cyan-400'
-                        : 'bg-gray-500 bg-opacity-20 text-gray-300 hover:bg-opacity-30'
-                    }`}
-                  >
-                    FR
-                  </button>
+                  
+                  {languageDropdownOpen && (
+                    <div 
+                      className="absolute top-full mt-1 right-0 bg-gray-900 bg-opacity-98 backdrop-blur-xl border border-gray-600 rounded-lg shadow-2xl overflow-hidden z-30"
+                      style={{ zIndex: 100002, position: 'absolute', pointerEvents: 'auto' }}
+                    >
+                      <div className="max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
+                        <button
+                          onClick={() => { setLanguage('en'); setLanguageDropdownOpen(false); }}
+                          className={`w-full px-4 py-3 text-left text-sm hover:bg-gray-700 hover:bg-opacity-50 transition-colors flex items-center space-x-2 min-w-[120px] ${
+                            language === 'en' ? 'text-cyan-300 bg-cyan-500 bg-opacity-20' : 'text-gray-300'
+                          }`}
+                          style={{ pointerEvents: 'auto' }}
+                        >
+                          <span>🇺🇸</span>
+                          <span>English</span>
+                        </button>
+                        <button
+                          onClick={() => { setLanguage('fr'); setLanguageDropdownOpen(false); }}
+                          className={`w-full px-4 py-3 text-left text-sm hover:bg-gray-700 hover:bg-opacity-50 transition-colors flex items-center space-x-2 min-w-[120px] ${
+                            language === 'fr' ? 'text-cyan-300 bg-cyan-500 bg-opacity-20' : 'text-gray-300'
+                          }`}
+                          style={{ pointerEvents: 'auto' }}
+                        >
+                          <span>🇫🇷</span>
+                          <span>Français</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 
                 <SignInButton mode="modal">
-                  <button className="text-gray-300 hover:text-white transition-colors duration-200">
+                  <button className="text-gray-300 hover:text-white transition-colors duration-200 text-xs sm:text-sm">
                     {t[language].login}
                   </button>
                 </SignInButton>
                 <SignUpButton mode="modal">
-                  <button className="btn-primary text-sm px-4 py-2 min-w-[120px]">
+                  <button className="btn-primary text-xs sm:text-sm px-2 sm:px-4 py-1.5 sm:py-2 min-w-[80px] sm:min-w-[120px]">
                     {t[language].getStarted}
                   </button>
                 </SignUpButton>
@@ -784,6 +845,21 @@ export default function HomePage() {
         {/* Footer */}
         <footer className="w-full border-t border-white border-opacity-10 bg-black bg-opacity-30 py-6 mt-8">
           <div className="max-w-7xl mx-auto px-6 flex flex-col items-center justify-center text-gray-400 text-sm text-center">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-3">
+              <Link
+                href="/terms"
+                className="text-gray-400 hover:text-cyan-300 transition-colors duration-200 underline"
+              >
+                {language === 'en' ? 'Terms of Service' : 'Conditions d\'Utilisation'}
+              </Link>
+              <span className="hidden sm:inline text-gray-600">•</span>
+              <Link
+                href="/privacy"
+                className="text-gray-400 hover:text-cyan-300 transition-colors duration-200 underline"
+              >
+                {language === 'en' ? 'Privacy Policy' : 'Politique de Confidentialité'}
+              </Link>
+            </div>
             <span>
               <a 
                 href="https://majdai.ai" 
@@ -815,34 +891,67 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="flex items-center space-x-4">
-              {/* Language Selector */}
-              <div className="flex space-x-2">
+            <div className="flex items-center space-x-1 sm:space-x-4">
+              {/* Terms of Service Link */}
+              <Link
+                href="/terms"
+                className="text-gray-400 hover:text-cyan-300 transition-colors duration-200 text-xs sm:text-sm underline"
+              >
+                {language === 'en' ? 'Terms' : 'Conditions'}
+              </Link>
+              
+              {/* Language Selector - Vertical Dropdown */}
+              <div className="relative language-dropdown">
                 <button
-                  onClick={() => setLanguage('en')}
-                  className={`px-3 py-1 rounded-lg text-sm transition-all duration-200 min-w-[60px] ${
-                    language === 'en'
-                      ? 'bg-cyan-500 bg-opacity-30 text-cyan-300 border border-cyan-400'
-                      : 'bg-gray-500 bg-opacity-20 text-gray-300 hover:bg-opacity-30'
-                  }`}
+                  onClick={() => setLanguageDropdownOpen(!languageDropdownOpen)}
+                  className="flex items-center px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm transition-all duration-200 bg-gray-500 bg-opacity-20 text-gray-300 hover:bg-opacity-30 border border-gray-600 min-w-[60px]"
                 >
-                  EN
+                  <span>{language === 'en' ? '🇺🇸' : '🇫🇷'} {language.toUpperCase()}</span>
+                  <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
                 </button>
-                <button
-                  onClick={() => setLanguage('fr')}
-                  className={`px-3 py-1 rounded-lg text-sm transition-all duration-200 min-w-[60px] ${
-                    language === 'fr'
-                      ? 'bg-cyan-500 bg-opacity-30 text-cyan-300 border border-cyan-400'
-                      : 'bg-gray-500 bg-opacity-20 text-gray-300 hover:bg-opacity-30'
-                  }`}
-                >
-                  FR
-                </button>
+                
+                {languageDropdownOpen && (
+                  <div className="absolute top-full mt-1 right-0 bg-gray-900 bg-opacity-98 backdrop-blur-xl border border-gray-600 rounded-lg shadow-2xl overflow-hidden" style={{ zIndex: 99999 }}>
+                    <div className="max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
+                      <button
+                        onClick={() => {
+                          setLanguage('en');
+                          setLanguageDropdownOpen(false);
+                        }}
+                        className={`w-full px-4 py-3 text-left text-sm hover:bg-gray-700 hover:bg-opacity-50 transition-colors flex items-center space-x-2 min-w-[120px] ${
+                          language === 'en' ? 'text-cyan-300 bg-cyan-500 bg-opacity-20' : 'text-gray-300'
+                        }`}
+                      >
+                        <span>🇺🇸</span>
+                        <span>English</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          setLanguage('fr');
+                          setLanguageDropdownOpen(false);
+                        }}
+                        className={`w-full px-4 py-3 text-left text-sm hover:bg-gray-700 hover:bg-opacity-50 transition-colors flex items-center space-x-2 min-w-[120px] ${
+                          language === 'fr' ? 'text-cyan-300 bg-cyan-500 bg-opacity-20' : 'text-gray-300'
+                        }`}
+                      >
+                        <span>🇫🇷</span>
+                        <span>Français</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
               
-              <div className="text-right">
+              {/* User Info - Responsive */}
+              <div className="text-right hidden sm:block">
                 <p className="text-white font-medium">{user?.firstName} {user?.lastName}</p>
                 <p className="text-gray-400 text-sm">{user?.emailAddresses[0]?.emailAddress}</p>
+              </div>
+              {/* Mobile User Info - Just first name */}
+              <div className="text-right sm:hidden">
+                <p className="text-white font-medium text-xs truncate max-w-[80px]">{user?.firstName}</p>
               </div>
               <UserButton afterSignOutUrl="/" />
             </div>
@@ -1356,5 +1465,31 @@ export default function HomePage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function App() {
+  const [language, setLanguage] = useState<'en' | 'fr'>('en');
+  const { showTermsModal, openTermsModal, closeTermsModal } = useTermsModal();
+
+  return (
+    <>
+      <TermsGate language={language}>
+        <HomePage 
+          language={language} 
+          setLanguage={setLanguage}
+          openTermsModal={openTermsModal}
+        />
+      </TermsGate>
+      
+      {/* Standalone Terms Modal for viewing from anywhere */}
+      <TermsOfServiceModal
+        isOpen={showTermsModal}
+        onAccept={closeTermsModal}
+        onDecline={closeTermsModal}
+        language={language}
+        showAcceptDecline={false}
+      />
+    </>
   );
 }
