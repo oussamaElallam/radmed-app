@@ -892,6 +892,7 @@ function HomePage({ language, setLanguage, openTermsModal }: HomePageProps) {
             </div>
 
             <div className="flex items-center space-x-1 sm:space-x-4">
+<<<<<<< HEAD
               {/* Terms of Service Link */}
               <Link
                 href="/terms"
@@ -900,6 +901,8 @@ function HomePage({ language, setLanguage, openTermsModal }: HomePageProps) {
                 {language === 'en' ? 'Terms' : 'Conditions'}
               </Link>
               
+=======
+>>>>>>> d84adb25ac553cd6ac2540122d9bfb64c998b441
               {/* Language Selector - Vertical Dropdown */}
               <div className="relative language-dropdown">
                 <button
