@@ -705,6 +705,184 @@ function HomePage({ language, setLanguage, openTermsModal }: HomePageProps) {
           </div>
         </section>
 
+        {/* Pricing Section */}
+        <section id="pricing" className="py-20 px-4 sm:px-6 bg-gradient-to-br from-gray-950 via-purple-950 to-gray-900">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-cyan-300 mb-2">
+                {language === 'en' ? 'Pricing & Plans' : 'Tarifs et Abonnements'}
+              </h2>
+              <p className="text-lg text-gray-300 mb-4">
+                {language === 'en' ? 'Choose the plan that fits your needs. Transparent pricing, no hidden fees.' : 'Choisissez le plan adapté à vos besoins. Tarification transparente, sans frais cachés.'}
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Free Trial Plan */}
+              <div className="bg-gray-900 bg-opacity-70 rounded-2xl p-8 border border-cyan-700 flex flex-col shadow-xl">
+                <h3 className="text-2xl font-semibold text-cyan-300 mb-2">
+                  {language === 'en' ? 'Free Trial' : 'Essai Gratuit'}
+                </h3>
+                <div className="text-3xl font-bold mb-4">
+                  {language === 'en' ? '$0' : '0€'}
+                </div>
+                <ul className="list-disc list-inside space-y-2 mb-4 text-gray-200">
+                  <li>{language === 'en' ? 'Limited number of AI analyses' : "Nombre limité d'analyses IA"}</li>
+                  <li>{language === 'en' ? 'Access to all imaging tools' : 'Accès à tous les outils d\'imagerie'}</li>
+                  <li>{language === 'en' ? 'Word export' : 'Export Word'}</li>
+                </ul>
+                <div className="mt-auto">
+                  <SignUpButton mode="modal">
+                    <button className="btn-primary w-full text-lg py-3 mt-2">
+                      {language === 'en' ? 'Start Free' : 'Commencer Gratuitement'}
+                    </button>
+                  </SignUpButton>
+                </div>
+              </div>
+              {/* Pro Subscription Plan */}
+              <div className="bg-gradient-to-br from-purple-700 via-indigo-800 to-cyan-900 rounded-2xl p-8 border-2 border-purple-400 flex flex-col shadow-2xl relative">
+                <span className="absolute top-0 right-0 sm:top-1 sm:right-1 md:top-2 md:right-2 bg-cyan-500 text-white text-xs font-bold px-2 py-1 rounded-full z-10 shadow-lg transform translate-x-1 -translate-y-1">
+                  {language === 'en' ? 'Most Popular' : 'Le Plus Populaire'}
+                </span>
+                <h3 className="text-2xl font-semibold text-purple-300 mb-2">
+                  {language === 'en' ? 'Pro Subscription' : 'Abonnement Pro'}
+                </h3>
+                <div className="text-3xl font-bold mb-4">
+                  {language === 'en' ? '$49/month' : '49€/mois'}
+                </div>
+                <ul className="list-disc list-inside space-y-2 mb-4 text-gray-200">
+                  <li>{language === 'en' ? 'Up to 200 AI reports monthly' : 'Jusqu\'à 200 rapports IA par mois'}</li>
+                  <li>{language === 'en' ? 'Email support' : 'Support par e-mail'}</li>
+                  <li>{language === 'en' ? 'Early access to new features' : 'Accès anticipé aux nouvelles fonctionnalités'}</li>
+                  <li>{language === 'en' ? 'HIPAA-compliant data handling' : 'Traitement des données conforme HIPAA'}</li>
+                  <li>{language === 'en' ? 'Word, PDF & JSON export' : 'Export Word, PDF et JSON'}</li>
+                </ul>
+                <div className="mt-auto">
+                  <button
+                    type="button"
+                    className="btn-primary w-full text-lg py-3 mt-2 hover:opacity-90 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                    onClick={() => setShowUpgradeModal(true)}
+                  >
+                    {language === 'en' ? 'Coming Soon' : 'Bientôt Disponible'}
+                  </button>
+                </div>
+              </div>
+              {/* Ultimate Plan */}
+              <div className="bg-gradient-to-br from-cyan-700 via-blue-800 to-cyan-900 rounded-2xl p-8 border-4 border-cyan-400 flex flex-col shadow-2xl relative">
+                <span className="absolute top-0 right-0 sm:top-1 sm:right-1 md:top-2 md:right-2 bg-cyan-400 text-black text-xs font-bold px-2 py-1 rounded-full z-10 shadow-lg transform translate-x-1 -translate-y-1">
+                  {language === 'en' ? 'Best Value' : 'Meilleur Choix'}
+                </span>
+                <h3 className="text-2xl font-semibold text-cyan-100 mb-2">
+                  {language === 'en' ? 'Ultra Subscription' : 'Abonnement Ultra'}
+                </h3>
+                <div className="text-3xl font-bold mb-4 text-white">
+                  {language === 'en' ? '$99/month' : '99€/mois'}
+                </div>
+                <ul className="list-disc list-inside space-y-2 mb-4 text-cyan-50">
+                  <li>{language === 'en' ? 'Up to 500 AI reports monthly' : 'Jusqu\'à 500 rapports IA par mois'}</li>
+                  <li>{language === 'en' ? 'Custom report templates' : 'Modèles de rapport personnalisés'}</li>
+                  <li>{language === 'en' ? 'All Pro features included' : 'Toutes les fonctionnalités Pro incluses'}</li>
+                  <li>{language === 'en' ? 'All export formats + DICOM' : 'Tous formats d\'export + DICOM'}</li>
+                  <li>{language === 'en' ? 'Dedicated training' : 'Formation dédiée'}</li>
+                  <li>{language === 'en' ? 'Premium support' : 'Support premium'}</li>
+                  <li>{language === 'en' ? 'API access (by request)' : 'Accès API (sur demande)'}</li>
+                </ul>
+                <div className="mt-auto">
+                  <a
+                    href="mailto:info@majdai.ai"
+                    className="btn-primary w-full text-lg py-3 mt-2 text-center block"
+                    style={{ pointerEvents: 'auto' }}
+                  >
+                    {language === 'en' ? 'Contact Us' : 'Contactez-nous'}
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div className="mt-8 text-xs text-gray-400 text-center">
+              {language === 'en'
+                ? 'All prices are in USD. VAT may apply. No refunds after access is granted. See our Refund Policy for details.'
+                : "Tous les prix sont en EUR. La TVA peut s'appliquer. Aucun remboursement après l'octroi de l'accès. Voir notre politique de remboursement pour plus de détails."}
+            </div>
+            <div className="mt-2 text-xs text-gray-400 text-center">
+              {language === 'en' ? 'Company: MAJD AI | Country: Morocco' : 'Société : MAJD AI | Pays : Maroc'}
+            </div>
+          </div>
+        </section>
+
+        {/* Upgrade to Pro Modal */}
+        {showUpgradeModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
+            <div className="bg-white rounded-xl max-w-lg w-full p-8 relative shadow-2xl">
+              <button
+                className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-2xl font-bold"
+                onClick={() => setShowUpgradeModal(false)}
+                aria-label="Close"
+              >
+                &times;
+              </button>
+              <h2 className="text-2xl font-bold mb-4 text-center text-cyan-700">
+                {language === 'en' ? 'Pro/Enterprise Interest' : 'Intéressé(e) par Pro/Entreprise ?'}
+              </h2>
+              <p className="mb-6 text-center text-gray-700">
+                {language === 'en'
+                  ? 'Fill out the form below to be notified when Pro or Enterprise plans are available. We will contact you with updates and early access.'
+                  : 'Remplissez le formulaire ci-dessous pour être averti lorsque les plans Pro ou Entreprise seront disponibles. Nous vous contacterons avec les mises à jour et l\'accès anticipé.'}
+              </p>
+              <form
+                className="flex flex-col gap-4"
+                onSubmit={async e => {
+                  e.preventDefault();
+                  const form = e.target as HTMLFormElement;
+                  const email = (form.elements.namedItem('email') as HTMLInputElement).value;
+                  const name = (form.elements.namedItem('name') as HTMLInputElement).value;
+                  const features = (form.elements.namedItem('features') as HTMLTextAreaElement).value;
+                  try {
+                    const res = await fetch('https://formspree.io/f/xgvyqrqk', {
+                      method: 'POST',
+                      headers: { 'Accept': 'application/json' },
+                      body: new FormData(form)
+                    });
+                    if (res.ok) {
+                      setShowUpgradeModal(false);
+                      alert(language === 'en' ? 'Thank you! We will contact you soon.' : 'Merci ! Nous vous contacterons bientôt.');
+                    } else {
+                      alert(language === 'en' ? 'Submission failed. Please try again.' : 'Échec de l\'envoi. Veuillez réessayer.');
+                    }
+                  } catch (err) {
+                    alert(language === 'en' ? 'Submission failed. Please try again.' : 'Échec de l\'envoi. Veuillez réessayer.');
+                  }
+                }}
+              >
+                <input
+                  name="email"
+                  type="email"
+                  required
+                  placeholder={language === 'en' ? 'Your email' : 'Votre email'}
+                  className="border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                />
+                <input
+                  name="name"
+                  type="text"
+                  required
+                  placeholder={language === 'en' ? 'Your name' : 'Votre nom'}
+                  className="border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                />
+                <textarea
+                  name="features"
+                  placeholder={language === 'en' ? 'What features are you interested in?' : 'Quelles fonctionnalités vous intéressent ?'}
+                  className="border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                  rows={3}
+                />
+                <button
+                  type="submit"
+                  className="btn-primary w-full text-lg py-3 mt-2"
+                >
+                  {language === 'en' ? 'Notify Me' : 'Prévenez-moi'}
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
         {/* Technology Section */}
         <section className="py-20 px-6 bg-black bg-opacity-20">
           <div className="max-w-7xl mx-auto">
@@ -859,6 +1037,14 @@ function HomePage({ language, setLanguage, openTermsModal }: HomePageProps) {
               >
                 {language === 'en' ? 'Privacy Policy' : 'Politique de Confidentialité'}
               </Link>
+              <span className="hidden sm:inline text-gray-600">•</span>
+              <Link
+                href="/refund"
+                className="text-gray-400 hover:text-cyan-300 transition-colors duration-200 underline"
+              >
+                {language === 'en' ? 'Refund Policy' : 'Politique de Remboursement'}
+              </Link>
+
             </div>
             <span>
               <a 

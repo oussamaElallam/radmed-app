@@ -172,8 +172,13 @@ export default function TermsOfServicePage() {
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
         <div className="bg-gray-900 bg-opacity-50 backdrop-blur-xl border border-gray-700 rounded-2xl p-8">
           {/* Title */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-white mb-2">{t.title}</h1>
+          <div className="bg-cyan-900 bg-opacity-20 border border-cyan-400 rounded-lg p-4 mb-6 text-center text-sm text-cyan-200">
+  {language === 'en'
+    ? 'These Terms & Conditions are entered into by and between MAJD AI, registered in France, and the user.'
+    : 'Ces Conditions d’Utilisation sont conclues entre MAJD AI, enregistrée en France, et l’utilisateur.'}
+</div>
+<div className="text-center mb-8">
+  <h1 className="text-3xl font-bold text-white mb-2">{t.title}</h1>
             <p className="text-gray-400 text-lg">{t.subtitle}</p>
             <p className="text-gray-500 text-sm mt-2">{t.lastUpdated}: July 2025</p>
           </div>
@@ -256,6 +261,16 @@ export default function TermsOfServicePage() {
                 {t.finalWarning}
               </p>
             </div>
+            <section>
+              <h2 className="text-xl font-semibold text-cyan-300 mb-3">
+                {language === 'en' ? 'Company Information' : 'Informations sur la société'}
+              </h2>
+              <p>
+                {language === 'en'
+                  ? 'Company: MAJD AI\nCountry: France'
+                  : 'Société : MAJD AI\nPays : France'}
+              </p>
+            </section>
           </div>
         </div>
       </main>
