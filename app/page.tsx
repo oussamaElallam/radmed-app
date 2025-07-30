@@ -598,11 +598,6 @@ function HomePage({ language, setLanguage, openTermsModal }: HomePageProps) {
                     {t[language].login}
                   </button>
                 </SignInButton>
-                <SignUpButton mode="modal">
-                  <button className="btn-primary text-xs sm:text-sm px-2 sm:px-4 py-1.5 sm:py-2 min-w-[80px] sm:min-w-[120px]">
-                    {t[language].getStarted}
-                  </button>
-                </SignUpButton>
               </div>
             </div>
           </div>
@@ -1010,11 +1005,6 @@ function HomePage({ language, setLanguage, openTermsModal }: HomePageProps) {
                 </a>
               </p>
               <div className="mt-6">
-                <SignUpButton mode="modal">
-                  <button className="btn-primary px-8 py-3 text-lg">
-                    {t[language].heroStartTrial}
-                  </button>
-                </SignUpButton>
               </div>
             </div>
           </div>
