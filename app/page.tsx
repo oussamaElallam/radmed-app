@@ -43,6 +43,7 @@ function HomePage({ language, setLanguage, openTermsModal }: HomePageProps) {
   const [editingReport, setEditingReport] = useState<string | null>(null);
   const [editedContent, setEditedContent] = useState('');
   const [languageDropdownOpen, setLanguageDropdownOpen] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
 
   // Patch to prevent duplicate custom element definition errors from third-party libraries (e.g., Clerk/TinyMCE)
   useEffect(() => {
@@ -237,6 +238,7 @@ function HomePage({ language, setLanguage, openTermsModal }: HomePageProps) {
       upgradeMessage: 'Pro version is coming soon. Fill out the form below to be notified when it\'s available.',
       limitReached: 'Daily limit reached. Upgrade to Pro for unlimited reports.'
     },
+    // <-- missing comma above added
     fr: {
       // Navigation
       login: 'Connexion',
@@ -427,14 +429,18 @@ function HomePage({ language, setLanguage, openTermsModal }: HomePageProps) {
     }
   }, [isSignedIn, isLoaded]);
 
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(event.target.files || []);
-    
+  // Drag-and-drop handlers
+  const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setDragActive(false);
+    const files = Array.from(event.dataTransfer.files || []);
+    if (selectedImages.length + files.length > 16) {
+      alert('You can upload a maximum of 16 images.');
+      return;
+    }
     for (const file of files) {
       let preview = '';
-      
       if (file.name.toLowerCase().endsWith('.dcm')) {
-        // For DICOM files, convert to base64 for preview
         try {
           const { fileToBase64 } = await import('@/hooks/useReports');
           const { base64 } = await fileToBase64(file);
@@ -443,27 +449,55 @@ function HomePage({ language, setLanguage, openTermsModal }: HomePageProps) {
           console.error('Failed to generate DICOM preview:', error);
           preview = '/api/placeholder/300/200?text=DICOM+File';
         }
-        
-        setSelectedImages(prev => [...prev, {
-          file: file,
-          preview: preview,
-          name: file.name
-        }]);
+        setSelectedImages(prev => [...prev, { file, preview, name: file.name }]);
       } else {
-        // For regular images, use FileReader
         const reader = new FileReader();
         reader.onload = (e) => {
-          setSelectedImages(prev => [...prev, {
-            file: file,
-            preview: e.target?.result as string,
-            name: file.name
-          }]);
+          setSelectedImages(prev => [...prev, { file, preview: e.target?.result as string, name: file.name }]);
         };
         reader.readAsDataURL(file);
       }
     }
   };
-  
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setDragActive(true);
+  };
+
+  const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setDragActive(false);
+  };
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
+    if (selectedImages.length + files.length > 16) {
+      alert('You can upload a maximum of 16 images.');
+      return;
+    }
+    for (const file of files) {
+      let preview = '';
+      if (file.name.toLowerCase().endsWith('.dcm')) {
+        try {
+          const { fileToBase64 } = await import('@/hooks/useReports');
+          const { base64 } = await fileToBase64(file);
+          preview = `data:image/png;base64,${base64}`;
+        } catch (error) {
+          console.error('Failed to generate DICOM preview:', error);
+          preview = '/api/placeholder/300/200?text=DICOM+File';
+        }
+        setSelectedImages(prev => [...prev, { file, preview, name: file.name }]);
+      } else {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          setSelectedImages(prev => [...prev, { file, preview: e.target?.result as string, name: file.name }]);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  };
+
   const removeImage = (index: number) => {
     setSelectedImages(prev => prev.filter((_, i) => i !== index));
   };
@@ -492,8 +526,6 @@ function HomePage({ language, setLanguage, openTermsModal }: HomePageProps) {
         },
         language
       );
-
-      // No need to increment dailyReportsUsed here; it will update after fetchReports
 
       // Clear form and images after successful generation
       setSelectedImages([]);
@@ -1185,53 +1217,59 @@ function HomePage({ language, setLanguage, openTermsModal }: HomePageProps) {
             <div className="card">
               <h2 className="text-2xl font-bold text-white mb-6">{t[language].uploadImage}</h2>
               
-              <div className="border-2 border-dashed border-gray-600 rounded-2xl p-8 text-center hover:border-cyan-400 transition-colors duration-200">
-                <input
-                  type="file"
-                  accept="image/*,.dcm"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                  id="imageUpload"
-                  multiple
-                />
-                <label htmlFor="imageUpload" className="cursor-pointer">
-                  {selectedImages.length > 0 ? (
-                    <div>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
-                        {selectedImages.map((image, index) => (
-                          <div key={index} className="relative group">
-                            <NextImage
-                              src={image.preview}
-                              alt={`Preview ${index + 1}`}
-                              width={200}
-                              height={128}
-                              className="w-full h-32 object-cover rounded-lg"
-                            />
-                            <button
-                              onClick={(e) => {
-                                e.preventDefault();
-                                removeImage(index);
-                              }}
-                              className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                            >
-                              ×
-                            </button>
-                            <p className="text-white text-xs mt-1 truncate">{image.name}</p>
-                          </div>
-                        ))}
-                      </div>
-                      <p className="text-cyan-300 font-medium">{selectedImages.length} {t[language].imagesSelected}</p>
-                      <p className="text-gray-400 text-sm mt-2">{t[language].addMore}</p>
-                    </div>
-                  ) : (
-                    <div>
-                      <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                      <p className="text-white font-medium mb-2">{t[language].dragDrop}</p>
-                      <p className="text-gray-400 text-sm">{t[language].supportedFormats}</p>
-                    </div>
-                  )}
-                </label>
-              </div>
+              <div
+  className={`border-2 border-dashed border-gray-600 rounded-2xl p-8 text-center hover:border-cyan-400 transition-colors duration-200 ${dragActive ? 'border-cyan-400 bg-cyan-900 bg-opacity-10' : ''}`}
+  onDrop={handleDrop}
+  onDragOver={handleDragOver}
+  onDragLeave={handleDragLeave}
+>
+  <input
+    type="file"
+    accept="image/*,.dcm"
+    onChange={handleImageUpload}
+    className="hidden"
+    id="imageUpload"
+    multiple
+  />
+  <label htmlFor="imageUpload" className="cursor-pointer">
+    {selectedImages.length > 0 ? (
+      <div>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+          {selectedImages.map((image, index) => (
+            <div key={index} className="relative group">
+              <NextImage
+                src={image.preview}
+                alt={`Preview ${index + 1}`}
+                width={200}
+                height={128}
+                className="w-full h-32 object-cover rounded-lg"
+              />
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  removeImage(index);
+                }}
+                className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                ×
+              </button>
+              <p className="text-white text-xs mt-1 truncate">{image.name}</p>
+            </div>
+          ))}
+        </div>
+        <p className="text-cyan-300 font-medium">{selectedImages.length} {t[language].imagesSelected} (Max 16)</p>
+        <p className="text-gray-400 text-sm mt-2">{t[language].addMore} <span className="text-yellow-400">(Maximum 16 images allowed)</span></p>
+      </div>
+    ) : (
+      <div>
+        <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+        <p className="text-white font-medium mb-2">{t[language].dragDrop}</p>
+        <p className="text-gray-400 text-sm">{t[language].supportedFormats}</p>
+        <p className="text-yellow-400 text-sm mt-2">Maximum 16 images allowed</p>
+      </div>
+    )}
+  </label>
+</div>
 
               {/* Patient Information Form */}
               {selectedImages.length > 0 && (
@@ -1284,14 +1322,10 @@ function HomePage({ language, setLanguage, openTermsModal }: HomePageProps) {
                         onChange={(e) => setPatientInfo({...patientInfo, modality: e.target.value})}
                         className="w-full px-4 py-2 bg-black bg-opacity-30 border border-gray-600 rounded-lg text-white focus:border-cyan-400 focus:outline-none"
                       >
-                        <option value="X-Ray">X-Ray</option>
-                        <option value="CT">CT Scan</option>
-                        <option value="MRI">MRI</option>
-                        <option value="Ultrasound">Ultrasound</option>
+                        <option value="X-Ray">X-ray</option>
                         <option value="Mammography">Mammography</option>
-                        <option value="Nuclear Medicine">Nuclear Medicine</option>
-                        <option value="PET Scan">PET Scan</option>
-                        <option value="Other">Other</option>
+                        <option value="Dental">Dental</option>
+                        <option value="Ultrasound">Ultrasound</option>
                       </select>
                     </div>
                     
