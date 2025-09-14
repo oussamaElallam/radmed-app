@@ -174,8 +174,8 @@ export default function TermsOfServicePage() {
           {/* Title */}
           <div className="bg-cyan-900 bg-opacity-20 border border-cyan-400 rounded-lg p-4 mb-6 text-center text-sm text-cyan-200">
   {language === 'en'
-    ? 'These Terms & Conditions are entered into by and between MAJD AI, registered in France, and the user.'
-    : 'Ces Conditions d’Utilisation sont conclues entre MAJD AI, enregistrée en France, et l’utilisateur.'}
+    ? 'These Terms & Conditions are entered into by and between MAJD AI, registered in Morocco, and the user.'
+    : 'Ces Conditions d’Utilisation sont conclues entre MAJD AI, enregistrée au Maroc, et l’utilisateur.'}
 </div>
 <div className="text-center mb-8">
   <h1 className="text-3xl font-bold text-white mb-2">{t.title}</h1>
