@@ -181,14 +181,14 @@ const TermsOfServiceModal: React.FC<TermsOfServiceModalProps> = ({
         overscrollBehavior: 'contain' // Prevent iOS bounce scrolling
       }}
     >
-      <div className="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
+      <div className="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl max-w-4xl w-full mx-4 max-h-[90vh] flex flex-col">
         <div className="p-6 border-b border-gray-700">
           <h2 className="text-2xl font-bold text-white mb-2">{t.title}</h2>
           <p className="text-gray-400">{t.subtitle}</p>
         </div>
         
         <div 
-          className="p-6 overflow-y-auto max-h-[60vh]"
+          className="p-6 overflow-y-auto max-h-[50vh] flex-1"
           style={{
             WebkitOverflowScrolling: 'touch',
             overscrollBehavior: 'contain'
@@ -275,7 +275,7 @@ const TermsOfServiceModal: React.FC<TermsOfServiceModalProps> = ({
         </div>
 
         {showAcceptDecline && (
-          <div className="p-6 border-t border-gray-700 flex flex-col sm:flex-row gap-3 sm:gap-4">
+          <div className="p-6 border-t border-gray-700 flex flex-col sm:flex-row gap-3 sm:gap-4 bg-gray-900 sticky bottom-0 z-10">
             <button
               onClick={handleButtonClick(onDecline)}
               onTouchStart={handleTouchStart}
