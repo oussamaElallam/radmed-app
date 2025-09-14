@@ -267,8 +267,8 @@ export default function TermsOfServicePage() {
               </h2>
               <p>
                 {language === 'en'
-                  ? 'Company: MAJD AI\nCountry: France'
-                  : 'Société : MAJD AI\nPays : France'}
+                  ? 'Company: MAJD AI\nCountry: Morocco'
+                  : 'Société : MAJD AI\nPays : Maroc'}
               </p>
             </section>
           </div>

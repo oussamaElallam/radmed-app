@@ -14,6 +14,13 @@ export const useTermsOfService = () => {
   useEffect(() => {
     if (!isLoaded || !user) return;
 
+    // Listen for custom event to show terms modal
+    const handleShowTermsModal = () => {
+      setShowTermsModal(true);
+    };
+
+    window.addEventListener('showTermsModal', handleShowTermsModal);
+
     // Check if user has accepted current version of terms
     const acceptedData = localStorage.getItem(TERMS_ACCEPTED_KEY);
     
@@ -50,13 +57,19 @@ export const useTermsOfService = () => {
       setHasAcceptedTerms(false);
       setShowTermsModal(true);
     }
+
+    // Cleanup event listener
+    return () => {
+      window.removeEventListener('showTermsModal', handleShowTermsModal);
+    };
   }, [user, isLoaded]);
 
   const acceptTerms = () => {
     if (!user) return;
 
-    const acceptedData = localStorage.getItem(TERMS_ACCEPTED_KEY);
-    let parsed: Record<string, any> = {};
+    try {
+      const acceptedData = localStorage.getItem(TERMS_ACCEPTED_KEY);
+      let parsed: Record<string, any> = {};
     
     if (acceptedData) {
       try {
@@ -73,9 +86,15 @@ export const useTermsOfService = () => {
       userEmail: user.emailAddresses[0]?.emailAddress || '',
     };
 
-    localStorage.setItem(TERMS_ACCEPTED_KEY, JSON.stringify(parsed));
-    setHasAcceptedTerms(true);
-    setShowTermsModal(false);
+      localStorage.setItem(TERMS_ACCEPTED_KEY, JSON.stringify(parsed));
+      setHasAcceptedTerms(true);
+      setShowTermsModal(false);
+    } catch (error) {
+      console.error('Error saving terms acceptance:', error);
+      // Still proceed to avoid blocking the user
+      setHasAcceptedTerms(true);
+      setShowTermsModal(false);
+    }
   };
 
   const declineTerms = () => {

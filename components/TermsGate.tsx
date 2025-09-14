@@ -70,8 +70,18 @@ const TermsGate: React.FC<TermsGateProps> = ({ children, language = 'en' }) => {
               </div>
 
               <button
-                onClick={() => window.location.reload()}
-                className="w-full px-6 py-3 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg transition-colors font-medium"
+                onClick={() => {
+                  // Force show the terms modal instead of reloading
+                  const event = new CustomEvent('showTermsModal');
+                  window.dispatchEvent(event);
+                }}
+                className="w-full px-6 py-3 bg-cyan-600 hover:bg-cyan-500 active:bg-cyan-400 text-white rounded-lg transition-colors font-medium touch-manipulation"
+                style={{
+                  WebkitTapHighlightColor: 'transparent',
+                  WebkitTouchCallout: 'none',
+                  WebkitUserSelect: 'none',
+                  userSelect: 'none'
+                }}
               >
                 Review Terms of Service
               </button>

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 
 interface TermsOfServiceModalProps {
   isOpen: boolean;
@@ -17,6 +17,25 @@ const TermsOfServiceModal: React.FC<TermsOfServiceModalProps> = ({
   language = 'en',
   showAcceptDecline = true,
 }) => {
+  // Prevent body scroll when modal is open (iOS fix)
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const translations = {
@@ -132,15 +151,49 @@ const TermsOfServiceModal: React.FC<TermsOfServiceModalProps> = ({
 
   const t = translations[language];
 
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    // Prevent modal from closing when clicking inside the modal content
+    if (e.target === e.currentTarget) {
+      // Don't close on backdrop click for iOS compatibility
+      return;
+    }
+  };
+
+  // Handle touch events for iOS
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.stopPropagation();
+  };
+
+  const handleButtonClick = (callback: () => void) => {
+    return (e: React.MouseEvent | React.TouchEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      callback();
+    };
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 backdrop-blur-sm">
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 backdrop-blur-sm"
+      onClick={handleBackdropClick}
+      style={{
+        WebkitOverflowScrolling: 'touch', // iOS smooth scrolling
+        overscrollBehavior: 'contain' // Prevent iOS bounce scrolling
+      }}
+    >
       <div className="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
         <div className="p-6 border-b border-gray-700">
           <h2 className="text-2xl font-bold text-white mb-2">{t.title}</h2>
           <p className="text-gray-400">{t.subtitle}</p>
         </div>
         
-        <div className="p-6 overflow-y-auto max-h-[60vh]">
+        <div 
+          className="p-6 overflow-y-auto max-h-[60vh]"
+          style={{
+            WebkitOverflowScrolling: 'touch',
+            overscrollBehavior: 'contain'
+          }}
+        >
           <div className="text-gray-300 space-y-4">
             <section>
               <h3 className="text-lg font-semibold text-cyan-300 mb-2">{t.acceptance}</h3>
@@ -224,14 +277,28 @@ const TermsOfServiceModal: React.FC<TermsOfServiceModalProps> = ({
         {showAcceptDecline && (
           <div className="p-6 border-t border-gray-700 flex flex-col sm:flex-row gap-3 sm:gap-4">
             <button
-              onClick={onDecline}
-              className="flex-1 px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors font-medium"
+              onClick={handleButtonClick(onDecline)}
+              onTouchStart={handleTouchStart}
+              className="flex-1 px-6 py-3 bg-gray-700 hover:bg-gray-600 active:bg-gray-500 text-white rounded-lg transition-colors font-medium touch-manipulation"
+              style={{
+                WebkitTapHighlightColor: 'transparent',
+                WebkitTouchCallout: 'none',
+                WebkitUserSelect: 'none',
+                userSelect: 'none'
+              }}
             >
               {t.decline}
             </button>
             <button
-              onClick={onAccept}
-              className="flex-1 px-6 py-3 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg transition-colors font-medium"
+              onClick={handleButtonClick(onAccept)}
+              onTouchStart={handleTouchStart}
+              className="flex-1 px-6 py-3 bg-cyan-600 hover:bg-cyan-500 active:bg-cyan-400 text-white rounded-lg transition-colors font-medium touch-manipulation"
+              style={{
+                WebkitTapHighlightColor: 'transparent',
+                WebkitTouchCallout: 'none',
+                WebkitUserSelect: 'none',
+                userSelect: 'none'
+              }}
             >
               {t.accept}
             </button>
@@ -241,8 +308,15 @@ const TermsOfServiceModal: React.FC<TermsOfServiceModalProps> = ({
         {!showAcceptDecline && (
           <div className="p-6 border-t border-gray-700">
             <button
-              onClick={onDecline}
-              className="w-full px-6 py-3 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg transition-colors font-medium"
+              onClick={handleButtonClick(onDecline)}
+              onTouchStart={handleTouchStart}
+              className="w-full px-6 py-3 bg-cyan-600 hover:bg-cyan-500 active:bg-cyan-400 text-white rounded-lg transition-colors font-medium touch-manipulation"
+              style={{
+                WebkitTapHighlightColor: 'transparent',
+                WebkitTouchCallout: 'none',
+                WebkitUserSelect: 'none',
+                userSelect: 'none'
+              }}
             >
               {t.close}
             </button>

@@ -18,7 +18,7 @@ export default function RefundPolicyPage() {
       exceptions: "Exceptions may be made solely in cases of accidental duplicate purchase or technical failure preventing access to the service. Please contact support@majdai.ai within 7 days of purchase in such cases.",
       process: "To request a refund under these exceptions, please provide your purchase details and a description of the issue.",
       contact: "For questions about this Refund Policy, contact us at support@majdai.ai.",
-      companyInfo: "Company: MAJD AI | Country: France"
+      companyInfo: "Company: MAJD AI | Country: Morocco"
     },
     fr: {
       title: "Politique de Remboursement",
@@ -30,7 +30,7 @@ export default function RefundPolicyPage() {
       exceptions: "Des exceptions peuvent être faites uniquement en cas d'achat en double accidentel ou de défaillance technique empêchant l'accès au service. Veuillez contacter support@majdai.ai dans les 7 jours suivant l'achat dans ces cas.",
       process: "Pour demander un remboursement dans ces cas, veuillez fournir les détails de votre achat et une description du problème.",
       contact: "Pour toute question concernant cette politique de remboursement, contactez-nous à support@majdai.ai.",
-      companyInfo: "Société : MAJD AI | Pays : France"
+      companyInfo: "Société : MAJD AI | Pays : Maroc"
     }
   };
   const t = translations[language];
